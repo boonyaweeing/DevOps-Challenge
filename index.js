@@ -13,7 +13,7 @@ app.listen(port, () => {
 
 
 const { MongoClient } = require("mongodb");
-const uri = "mongodb+srv://users-pets:usersandpets00@cluster0.srecvth.mongodb.net/test";
+const uri = "";
 
 //create user
 app.post('/users/create', async(req, res) => {
