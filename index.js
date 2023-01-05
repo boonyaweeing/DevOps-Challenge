@@ -13,7 +13,7 @@ app.listen(port, () => {
 
 
 const { MongoClient } = require("mongodb");
-const uri = "mongodb://myUserAdmin:myUserAdmin@localhost:27017";
+const uri = "mongodb+srv://users-pets:usersandpets00@cluster0.srecvth.mongodb.net/test";
 
 //create user
 app.post('/users/create', async(req, res) => {
@@ -67,14 +67,48 @@ app.put('/users/update', async(req, res) => {
     const userName = String(req.body.userName);
     const client = new MongoClient(uri);
     await client.connect();
-    const x = await client.db('mydb').collection('users').updateOne({userName: userName}, {"$set": {
-        userId: parseInt(user.userId),
-        userName: user.userName,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        age: user.age,
-        petName: user.petName
-    }});
+    //ใช้สำหรับตรวจสอบว่ามีข้อมูลอะไรที่ต้องการอัพเดตบ้าง
+    const data = {};
+    if (user.userId != undefined) {
+        data.userId = parseInt(user.userId);
+    }
+    if (user.newUserName != undefined) {
+        data.newUserName = user.newUserName;
+    }
+    if (user.firstName != undefined) {
+        data.firstName = user.firstName;
+    }
+    if (user.lastName != undefined) {
+        data.lastName = user.lastName;
+    }
+    if (user.age != undefined) {
+        data.age = user.age;
+    }
+    if (user.petName != undefined) {
+        data.petName = user.petName;
+    }
+    //ตัวอย่างชุดการส่งข้อมูลผ่าน postman
+    //สามารถลบหัวข้อที่ไม่ต้องการอัพเดตได้โดยไม่ต้องใส่ข้อมูลเดิม
+    /*
+        {
+            "userName": "Santa2",
+            "userId": 0,
+            "firstName": "testFirstName",
+            "lastName": "testLastName",
+            "age": "26",
+            "petName": [1,2]
+        }
+    */
+    console.log(data);
+    await client.db('mydb').collection('users').updateOne({userName: userName}, {"$set": 
+        data
+        // userId: parseInt(user.userId),
+        // newUserName: user.newUserName,
+        // firstName: user.firstName,
+        // lastName: user.lastName,
+        // age: user.age,
+        // petName: user.petName
+    });
     await client.close();
     res.status(200).send({
       "status": "ok",
@@ -151,11 +185,26 @@ app.put('/pets/update', async(req, res) => {
     const petName = String(req.body.petName);
     const client = new MongoClient(uri);
     await client.connect();
-    const x = await client.db('mydb').collection('pets').updateOne({petName: petName}, {"$set": {
-        petId: parseInt(pet.petId),
-        petName: pet.petName,
-        petType: pet.petType
-    }});
+
+    const data = {};
+    if (pet.petId != undefined) {
+        data.petId = parseInt(pet.petId);
+    }
+    if (pet.newPetName != undefined) {
+        data.newPetName = pet.PetName;
+    }
+    if (pet.petType != undefined) {
+        data.petType = pet.petType;
+    }
+   
+
+  await client.db('mydb').collection('pets').updateOne({petName: petName}, {"$set": data
+    // {
+    //     petId: parseInt(pet.petId),
+    //     petName: pet.petName,
+    //     petType: pet.petType
+    // }
+    });
     await client.close();
     res.status(200).send({
       "status": "ok",
